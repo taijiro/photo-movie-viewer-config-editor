@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
+
 app.use(express.static('public'));
 app.use('/data', express.static('data'));
 
@@ -14,7 +15,7 @@ app.use(bodyParser.json());
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'data/');
+    cb(null, __dirname + '/data/');
   },
   filename: function (req, file, cb) {
     cb(null,file.originalname);
@@ -32,14 +33,14 @@ app.get('/files', function(req,res){
   let json = [];
 
   try{
-    json = JSON.parse(fs.readFileSync('data/Config.json', 'utf8'));
+    json = JSON.parse(fs.readFileSync(__dirname + '/data/Config.json', 'utf8'));
   } catch (error) {
   }
 
-  fs.readdir('data/', function(err, files){
+  fs.readdir(__dirname + '/data/', function(err, files){
     if (err) throw err;
     for(let n=0;n<files.length;n++){
-      const stat=fs.statSync('data/' + files[n]);
+      const stat=fs.statSync(__dirname + '/data/' + files[n]);
       if(stat.isFile() && /.*\.(gif|jpg|jpeg|png|mp4)$/i.test(files[n])){
         let type = 'image';
         if(/.*\.(mp4)$/i.test(files[n])){
@@ -68,10 +69,10 @@ app.post('/save', (req,res)=>{
 });
 
 delFiles = (json) => {
-  fs.readdir('data/', function(err, files){
+  fs.readdir(__dirname + '/data/', function(err, files){
     if (err) throw err;
     for(let n=0;n<files.length;n++){
-      const stat=fs.statSync('data/' + files[n]);
+      const stat=fs.statSync(__dirname + '/data/' + files[n]);
       if(stat.isFile() && /.*\.(gif|jpg|jpeg|png|mp4)$/i.test(files[n])){
         let type = 'image';
         if(/.*\.(mp4)$/i.test(files[n])){
@@ -81,7 +82,7 @@ delFiles = (json) => {
 
         }else{
           try {
-            fs.unlinkSync('data/' + files[n]);
+            fs.unlinkSync(__dirname + '/data/' + files[n]);
             console.log("delete: " + files[n]);
           } catch (error) {
             throw error;
@@ -105,7 +106,7 @@ isExistInJson = (json, file) => {
 
 saveJson = (json) => {
   try {
-    fs.writeFileSync('data/Config.json',JSON.stringify(json, null, '    '));
+    fs.writeFileSync(__dirname + '/data/Config.json',JSON.stringify(json, null, '    '));
   }catch(e){
     console.log(e);
   }
