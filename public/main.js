@@ -2,7 +2,7 @@ let sendCount=0;
 
 function sendFileToServer(formData,status)
 {
-    var uploadURL ="/upload"; //Upload URL
+    var uploadURL ="upload"; //Upload URL
     var extraData ={}; //Extra Data.
     sendCount++;
     var jqXHR=$.ajax({
@@ -45,7 +45,7 @@ loadDir = () => {
   $('.statusbar').remove();
 
   $.ajax({
-    url:"/files",
+    url:"files",
     type:"GET",
     dataType:'json',
     cache : false
@@ -210,7 +210,7 @@ $(document).ready(function()
     console.log(files);
     
     $.ajax({
-      url:"/save",
+      url:"save",
       data: JSON.stringify(files),
       contentType: 'application/json',
       type:"POST",
