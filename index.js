@@ -111,7 +111,7 @@ makeZip = (json) => {
   const millis = Date.now();
   const version = {
     "version":Math.floor(millis / 1000),
-    //"file":"https://mtpdb.dev.netarts.co.jp/editor1/data/
+    //"file":"https://mtpdb.dev.netarts.co.jp/editor1/data/program.zip"
     "file":"http://127.0.0.1:3000/data/program.zip"
   };
   try {
@@ -120,11 +120,27 @@ makeZip = (json) => {
     console.log(e);
   }
 
+  let player = {
+    items: JSON.parse(JSON.stringify(json)) 
+  };
+  for(let n=0;n<player.items.length;n++){
+    player.items[n].file = player.items[n].name;
+    delete player.items[n].name;
+    if(player.items[n].type==='video'){
+      delete player.items[n].time;
+    }
+  }
+  try {
+    fs.writeFileSync(__dirname + '/data/ConfigPlayer.json',JSON.stringify(player, null, '    '));
+  }catch(e){
+    console.log(e);
+  }
+
   const archive = archiver.create('zip', {});
   const output = fs.createWriteStream(__dirname + '/data/' + zip_file_name);
   archive.pipe(output);
 
-  archive.append(fs.createReadStream(__dirname + '/data/Config.json'), { name: 'Config.json' });
+  archive.append(fs.createReadStream(__dirname + '/data/ConfigPlayer.json'), { name: 'Config.json' });
 
   for(let n=0;n<json.length;n++){
     archive.append(fs.createReadStream(__dirname + '/data/' + json[n].name), { name: json[n].name });
